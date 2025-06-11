@@ -31,7 +31,7 @@ export default function App() {
           <Card texto="Card 1: Estilização com Flex" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleCardPress}>
-          <Card texto="Card 2: Layouts Responsivos" />
+          <Card texto="Card 2: Layouts" />
         </TouchableOpacity>
       </View>
     </View>
@@ -63,5 +63,32 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     marginBottom: 20,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#333',
+    textAlign: 'center',
+  },
+  cardSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  cardText: {
+    fontSize: 16,
+    color: '#333',
   },
 });
