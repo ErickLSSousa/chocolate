@@ -27,16 +27,29 @@ export default function App() {
         <Text style={styles.subtitle}>Explorando Estilos no React Native</Text>
       </View>
       <View style={styles.cardSection}>
-        <TouchableOpacity onPress={handleCardPress}>
-          <Card texto="Card 1: Estilização com Flex" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleCardPress}>
-          <Card texto="Card 2: Layouts" />
-        </TouchableOpacity>
-      </View>
+        <CustomCard
+          titulo={"Card 1:Estilização"}
+        corFundo="#ffebcd"
+        onPress={() => Alert.alert('Custom Card', 'Card 1 clicado!')}
+        />
+      <CustomCard
+      titulo={"Card 2:Layout"}
+      corFundo="#e6e6fa"
+      onPress={() => Alert.alert('Custom Card', 'Card 2 clicado!')}
+      />
+    </View >
     </View>
   );
 }
+
+function CustomCard({ titulo, corFundo, onPress }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.card, { backgroundColor: corFundo }]}>
+      <Text style={styles.cardText}>{titulo}</Text>
+    </TouchableOpacity>
+  );
+}
+
 
 const styles = StyleSheet.create({
   container: {
