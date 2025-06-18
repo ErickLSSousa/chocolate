@@ -1,18 +1,22 @@
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { Image } from 'react-native';
+import ScrollCard from '../components/ScrollCard';
 
 export default function ScrollScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Tela com ScrollView</Text>
-
             <ScrollView style={styles.scrollContainer}>
                 {Array.from({ length: 20 }).map((_, index) => (
-                    <View key={index} style={styles.item}>
-                        <Text style={styles.itemText}>Item {index + 1}</Text>
-                    </View>
+                    <ScrollCard key={index} index={index}>
+                        title={item.title}
+                        image={item.Image}
+                        text={item.text}
+                    </ScrollCard>
+
+
                 ))}
             </ScrollView>
-
             <TouchableOpacity
                 style={styles.button}
                 onPress={() => navigation.navigate('Home')}
@@ -38,18 +42,6 @@ const styles = StyleSheet.create({
     },
     scrollContainer: {
         flex: 1,
-    },
-    item: {
-        backgroundColor: '#fff',
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 10,
-        borderWidth: 1,
-        borderColor: '#ddd',
-    },
-    itemText: {
-        fontSize: 16,
-        color: '#333',
     },
     button: {
         backgroundColor: '#007bff',
