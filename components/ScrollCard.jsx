@@ -1,11 +1,11 @@
 import { StyleSheet, View, Text, TouchableOpacity , Image } from 'react-native';
 
-export default function ScrollCard({ item, image, key, index, text}) {
+export default function ScrollCard({ key, index, item}) {
     return (
         <View key={index} index={index}>
-            <Image style={styles.itemImage}>{image}</Image>
-            <Text style={styles.item}>{item}</Text>
-            <Text style={styles.itemText}>{text}</Text>
+            <Image style={styles.itemImage} source={item.image}/>
+            <Text style={styles.item}>{item.nome}</Text>
+            <Text style={styles.itemText}>{item.text}</Text>
         </View>
     );
 }

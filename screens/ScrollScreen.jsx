@@ -1,25 +1,35 @@
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
 import ScrollCard from '../components/ScrollCard';
+import { useState } from 'react';
 
 export default function ScrollScreen({ navigation }) {
+    const [ClickCount, setClickCount] = useState(0);
+    const DATA = {
+        nome: 'arroz',
+        text: 'cozido',
+        image: { uri: 'https://love.doghero.com.br/wp-content/uploads/2018/12/golden-retriever-1.png' }
+    }
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Tela com ScrollView</Text>
+            <Text style={styles.counterText}>Iten Clicados: {ClickCount}</Text>
             <ScrollView style={styles.scrollContainer}>
                 {Array.from({ length: 20 }).map((_, index) => (
-                    <ScrollCard key={index} index={index}>
-                        title={item.title}
-                        image={item.Image}
-                        text={item.text}
+                    <ScrollCard key={index} index={index} item={DATA}>
                     </ScrollCard>
 
 
                 ))}
             </ScrollView>
+
             <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate('Home')}
+                key={index}
+                style={styles.item}
+                onPress={() => {
+                    SetClickCount((prevCount) => prevCount + 1);
+                    navigation.navigate('Details', { mensagem: `Item ${index + 1} Clicado!` })
+                }}
             >
                 <Text style={styles.buttonText}>Voltar para Home</Text>
             </TouchableOpacity>

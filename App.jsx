@@ -4,6 +4,7 @@ import HomeScreen from './screens/Home';
 import DetailsScreen from './screens/details';
 import ProfileScreen from './screens/ProfileScreen';
 import ScrollScreen from './screens/ScrollScreen';
+import FormScreen from './screens/Formscreen';
 
 const Stack = createStackNavigator();
 
@@ -47,6 +48,15 @@ export default function App() {
             headerTintColor: '#fff',
           }}
         />
+        <Stack.Screen
+          name="Form"
+          component={FormScreen}
+          options={{
+            title: 'Formulario',
+            headerStyle: { backgroundColor: '#007bff' },
+            headerTintColor: '#fff',
+          }}
+          />
       </Stack.Navigator>
     </NavigationContainer>
   );
