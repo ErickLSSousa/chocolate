@@ -2,9 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/Home';
 import DetailsScreen from './screens/details';
-import ProfileScreen from './screens/ProfileScreen';
-import ScrollScreen from './screens/ScrollScreen';
-import FormScreen from './screens/Formscreen';
+import AddTaskScreen from './screens/AddTaskScreen';
 
 const Stack = createStackNavigator();
 
@@ -30,30 +28,12 @@ export default function App() {
             headerTintColor: '#fff',
           }}
         />
-        <Stack.Screen
-          name="Profile"
-          component={ProfileScreen}
+          <Stack.Screen
+          name="AddTask"
+          component={AddTaskScreen}
           options={{
-            title: 'Meu Perfil',
+            title: 'Criar Tarefa',
             headerStyle: { backgroundColor: '#17a2b8' },
-            headerTintColor: '#fff',
-          }}
-        />
-        <Stack.Screen
-          name="Scroll"
-          component={ScrollScreen}
-          options={{
-            title: 'ScrollView',
-            headerStyle: { backgroundColor: '#28a745' },
-            headerTintColor: '#fff',
-          }}
-        />
-        <Stack.Screen
-          name="Form"
-          component={FormScreen}
-          options={{
-            title: 'Formulario',
-            headerStyle: { backgroundColor: '#007bff' },
             headerTintColor: '#fff',
           }}
           />
