@@ -1,43 +1,55 @@
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator
+} from 'react-native';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import TaskCard from '../components/TaskCard';
+import CustomButton from '../components/CustomButton';
+import CustomModal from '../components/CustomModal';
 
 export default function HomeScreen({ navigation }) {
   const [localTasks, setLocalTasks] = useState([]);
   const [apiTasks, setApiTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
 
   useEffect(() => {
     setIsLoading(true);
     axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5')
       .then(response => {
         setApiTasks(response.data);
-        setIsLoading(false);
       })
-      .catch(err => {
+      .catch(() => {
         setError('Erro ao carregar tarefas da API');
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   }, []);
 
-  const addTask = ({ title, description }) => {
+  const addTask = ({ title, description, id }) => {
     setLocalTasks(prev => [
       ...prev,
-      {
-        id: Date.now().toString(), title, description: description || '', completed: false
-      },
+      { id, title, description: description || '', completed: false }
     ]);
   };
 
+  const deleteTask = () => {
+    setLocalTasks(prev =>
+      prev.filter(task => task.id !== taskToDelete)
+    );
+    setModalVisible(false);
+    setTaskToDelete(null);
+  };
 
-
-
-  const toggleTaskCompletion = (id) => {
-    setLocalTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
+  const toggleTaskCompletion = id => {
+    setLocalTasks(prev =>
+      prev.map(task =>
+        task.id === id
+          ? { ...task, completed: !task.completed }
+          : task
       )
     );
   };
@@ -48,19 +60,39 @@ export default function HomeScreen({ navigation }) {
     const isLocal = typeof item.id === 'string';
 
     return (
-      <TaskCard
-        item={item}
-        title={item.title}
-        completed={item.completed}
-        onPress={isLocal ? () => navigation.navigate('Details', { task: item }) : null}
-        onToggle={isLocal ? () => toggleTaskCompletion(item.id) : null}
-      />
+      <View>
+        <Text style={styles.sourceText}>
+          {isLocal ? 'Local' : 'API'}
+        </Text>
+        <TaskCard
+          item={item}
+          title={item.title}
+          completed={item.completed}
+          onPress={
+            isLocal
+              ? () => navigation.navigate('Details', { task: item })
+              : null
+          }
+          onToggle={
+            isLocal
+              ? () => toggleTaskCompletion(item.id)
+              : null
+          }
+          onDelete={
+            isLocal
+              ? () => {
+                setTaskToDelete(item.id);
+                setModalVisible(true);
+              }
+              : null
+          }
+        />
+      </View>
     );
   };
 
   const [filter, setFilter] = useState('all');
-
-  const filteredTasks = allTasks.filter((task) => {
+  const filteredTasks = allTasks.filter(task => {
     if (filter === 'pending') return !task.completed;
     if (filter === 'completed') return task.completed;
     return true;
@@ -70,30 +102,28 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>Minhas Tarefas</Text>
       <Text style={styles.counterText}>
-        Tarefas: {allTasks.length} | Concluídas: {allTasks.filter((task) => task.completed).length}
+        Tarefas: {allTasks.length} | Concluídas: {allTasks.filter(t => t.completed).length}
       </Text>
 
       <View style={styles.filterContainer}>
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'all' && styles.activeFilter]}
+        <CustomButton
+          title="Todas"
           onPress={() => setFilter('all')}
-        >
-          <Text style={styles.filterText}>Todas</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'pending' && styles.activeFilter]}
+          color={filter === 'all' ? '#007bff' : '#ddd'}
+          textStyle={{ color: filter === 'all' ? '#fff' : '#333' }}
+        />
+        <CustomButton
+          title="Pendentes"
           onPress={() => setFilter('pending')}
-        >
-          <Text style={styles.filterText}>Pendentes</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'completed' && styles.activeFilter]}
+          color={filter === 'pending' ? '#007bff' : '#ddd'}
+          textStyle={{ color: filter === 'pending' ? '#fff' : '#333' }}
+        />
+        <CustomButton
+          title="Concluídas"
           onPress={() => setFilter('completed')}
-        >
-          <Text style={styles.filterText}>Concluídas</Text>
-        </TouchableOpacity>
+          color={filter === 'completed' ? '#007bff' : '#ddd'}
+          textStyle={{ color: filter === 'completed' ? '#fff' : '#333' }}
+        />
       </View>
 
       {isLoading ? (
@@ -106,22 +136,29 @@ export default function HomeScreen({ navigation }) {
         <FlatList
           data={filteredTasks}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          style={styles.list}
+          keyExtractor={item => item.id.toString()}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
+          style={styles.list}
         />
       )}
 
-      <TouchableOpacity
-        style={styles.addButton}
+      <CustomButton
+        title="Adicionar Tarefa"
         onPress={() => navigation.navigate('AddTask', { addTask })}
-      >
-        <Text style={styles.buttonText}>Adicionar Tarefa</Text>
-      </TouchableOpacity>
+        color="#28a745"
+      />
+
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Confirmar Exclusão"
+        message="Deseja realmente excluir esta tarefa?"
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        onConfirm={deleteTask}
+      />
     </View>
   );
-
-
 }
 
 const styles = StyleSheet.create({
@@ -151,7 +188,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#d35454',
+    color: '#dc3545',
     textAlign: 'center',
     marginTop: 20,
   },
@@ -179,7 +216,7 @@ const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   filterButton: {
     padding: 10,
@@ -193,5 +230,4 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
   },
-  
 });

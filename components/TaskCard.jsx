@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import CustomButton from './CustomButton';
 
-export default function TaskCard({ item, title, completed, onPress, onToggle }) {
+export default function TaskCard({ item, title, completed, onPress, onToggle, isLocal, onDelete }) {
     return (
         <View style={[styles.cardContainer, completed && styles.completedContainer]}>
             <TouchableOpacity style={styles.card} onPress={onPress} disabled={!onPress}>
@@ -14,7 +15,24 @@ export default function TaskCard({ item, title, completed, onPress, onToggle }) 
                 </TouchableOpacity>
             )}
             <Text style={styles.sourceText}>{!item.userId ? 'Local' : 'API'}</Text>
-        </View>
+        
+          <View style={styles.actions}>
+          {onToggle && (
+            <TouchableOpacity style={styles.toggleButton} onPress={onToggle}>
+              <Text style={styles.toggleText}>{completed ? '✓' : '○'}</Text>
+            </TouchableOpacity>
+          )}
+          {isLocal && (
+            <CustomButton
+              title="Excluir"
+              onPress={onDelete}
+              color="#dc3545"
+              style={styles.deleteButton}
+              textStyle={styles.deleteButtonText}
+            />
+          )}
+          </View>
+        </View >
     );
 }
 
@@ -61,5 +79,16 @@ const styles = StyleSheet.create({
         color: '#999',
         marginTop: 5,
 
-    }
+    },
+    actions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    deleteButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+    },
+    deleteButtonText: {
+        fontSize: 14,
+    },
 });
