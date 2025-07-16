@@ -3,9 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import axios from 'axios'
+import { useTasks } from '../contexts/TaskContext';
 
-export default function AddTaskScreen({ navigation, route }) {
-  const { addTask } = route.params;
+export default function AddTaskScreen({ navigation}) {
+  const { addTask } = useTasks()
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
