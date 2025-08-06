@@ -1,63 +1,48 @@
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import { useTasks } from '../contexts/TaskContext';
 
-export default function ProfileScreen({ navigation }) {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Tela de Perfil</Text>
+export default function ProfileScreen() {
+  const { theme } = useTasks();
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
-                <Text style={styles.buttonText}>Voltar para Home</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={[styles.button, { backgroundColor: '#dc3545' }]}
-                onPress={() => navigation.navigate('Details', { mensagem: 'Olá do Perfil!' })}
-            >
-                <Text style={styles.buttonText}>Ir para Detalhes</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={[styles.button, { backgroundColor: '#007bff' }]}
-                onPress={() => navigation.navigate('Scroll')}
-            >
-                <Text style={styles.buttonText}>Ir para ScrollView</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={[styles.button, { backgroundColor: '#28a745' }]}
-                onPress={() => navigation.navigate('Form')}
-            >
-                <Text style={styles.buttonText}>Ir para Formulario</Text>
-            </TouchableOpacity>
-
-        </View>
-    );
+  return (
+    <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
+      <Text style={[styles.title, theme === 'dark' && styles.darkText]}>Perfil do Usuário</Text>
+      <Text style={[styles.text, theme === 'dark' && styles.darkText]}>
+        Nome: Usuário Exemplo
+      </Text>
+      <Text style={[styles.text, theme === 'dark' && styles.darkText]}>
+        Email: usuario@exemplo.com
+      </Text>
+      <Text style={[styles.text, theme === 'dark' && styles.darkText]}>
+        Tarefas Concluídas: (baseado no TaskContext)
+      </Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        color: '#333',
-    },
-    button: {
-        backgroundColor: '#28a745',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        marginBottom: 10,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  darkContainer: {
+    backgroundColor: '#333',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+  },
+  text: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 10,
+  },
+  darkText: {
+    color: '#fff',
+  },
 });
