@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "chocolate",
-    "slug": "chocolate",
+    "name": "taskApp",
+    "slug": "taskApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
