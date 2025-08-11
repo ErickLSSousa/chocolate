@@ -2,7 +2,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import { useTasks } from '../contexts/TaskContext';
 
 export default function ProfileScreen() {
-  const { theme } = useTasks();
+  const { theme, getCompletedCount } = useTasks();
 
   return (
     <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
@@ -14,7 +14,7 @@ export default function ProfileScreen() {
         Email: usuario@exemplo.com
       </Text>
       <Text style={[styles.text, theme === 'dark' && styles.darkText]}>
-        Tarefas Concluídas: (baseado no TaskContext)
+        Tarefas Concluídas: {getCompletedCount()}
       </Text>
     </View>
   );

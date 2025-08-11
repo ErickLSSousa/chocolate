@@ -7,15 +7,13 @@ import CustomModal from '../components/CustomModal';
 import { useTasks } from '../contexts/TaskContext';
 
 export default function HomeScreen({ navigation }) {
-  const { localTasks, toggleTaskCompletion, deleteTask, clearTasks, getCompletedCount, 
-    theme, toggleTheme, exportTasks, restoreTasks } = useTasks();
+  const { localTasks, toggleTaskCompletion, deleteTask, getCompletedCount, theme } = useTasks();
   const [apiTasks, setApiTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
   const [modalVisible, setModalVisible] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
-  const [clearModalVisible, setClearModalVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
@@ -37,27 +35,7 @@ export default function HomeScreen({ navigation }) {
     if (filter === 'completed') return task.completed;
     return true;
   });
-  const handleExport = async () => {
-    try {
-      const message = await exportTasks();
-      setSuccessMessage(message);
-      setTimeout(() => setSuccessMessage(''), 2000);
-    } catch (err) {
-      setSuccessMessage('');
-      alert(err.message);
-    }
-  };
 
-  const handleRestore = async () => {
-    try {
-      const message = await restoreTasks();
-      setSuccessMessage(message);
-      setTimeout(() => setSuccessMessage(''), 2000);
-    } catch (err) {
-      setSuccessMessage('');
-      alert(err.message);
-    }
-  };
   const renderItem = ({ item }) => {
     const isLocal = typeof item.id === 'string'
     return(
@@ -81,7 +59,6 @@ export default function HomeScreen({ navigation }) {
         Tarefas: {filteredTasks.length} | Concluídas: {getCompletedCount()}
       </Text>
       {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
-      <CustomButton title="Alterar Tema" onPress={() => toggleTheme()} color="#6c757d" />
       <View style={styles.filterContainer}>
         <CustomButton
           title="Todas"
@@ -144,21 +121,6 @@ export default function HomeScreen({ navigation }) {
         onPress={() => navigation.navigate('AddTask')}
         color="#28a745"
       />
-      <CustomButton
-        title="Limpar Tarefas"
-        onPress={() => setClearModalVisible(true)}
-        color="#dc3545"
-      />
-       <CustomButton
-        title="Exportar Tarefas"
-        onPress={handleExport}
-        color="#17a2b8"
-      />
-      <CustomButton
-        title="Restaurar Backup"
-        onPress={handleRestore}
-        color="#17a2b8"
-      />
       <CustomModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
@@ -170,16 +132,6 @@ export default function HomeScreen({ navigation }) {
           setTaskToDelete(null);
           setSuccessMessage('Tarefa excluída com sucesso!');
           setTimeout(() => setSuccessMessage(''), 2000);
-        }}
-      />
-      <CustomModal
-        visible={clearModalVisible}
-        onClose={() => setClearModalVisible(false)}
-        title="Limpar Tarefas"
-        message="Deseja excluir todas as tarefas locais?"
-        onConfirm={() => {
-          clearTasks();
-          setClearModalVisible(false);
         }}
       />
     </View>
@@ -196,12 +148,6 @@ const styles = StyleSheet.create({
   darkContainer: {
     backgroundColor: '#333',
   },
-  successText: {
-    fontSize: 16,
-    color: '#28a745',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -214,6 +160,12 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 10,
     textAlign: 'center',
+  },
+  successText: {
+    fontSize: 16,
+    color: '#28a745',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   filterContainer: {
     flexDirection: 'row',

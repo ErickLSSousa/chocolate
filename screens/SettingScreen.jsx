@@ -3,89 +3,95 @@ import { useState } from 'react';
 import CustomButton from '../components/CustomButton';
 import CustomModal from '../components/CustomModal';
 import { useTasks } from '../contexts/TaskContext';
+import { useNavigation } from '@react-navigation/native';
 
 export default function SettingsScreen() {
   const { toggleTheme, theme, clearTasks, exportTasks, restoreTasks } = useTasks();
   const [modalVisible, setModalVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigation();
 
   const handleClearTasks = async () => {
-  try {
-    await clearTasks();
-    setModalVisible(false);
-    setSuccessMessage('Tarefas limpas com sucesso!');
-    setTimeout(() => setSuccessMessage(''), 2000);
-  } catch (err) {
-    setModalVisible(false);
-    setSuccessMessage('');
-    alert('Erro ao limpar tarefas');
-  }
-};
+    try {
+      await clearTasks();
+      setModalVisible(false);
+      setSuccessMessage('Tarefas limpas com sucesso!');
+      setTimeout(() => setSuccessMessage(''), 2000);
+    } catch (err) {
+      setModalVisible(false);
+      setSuccessMessage('');
+      alert('Erro ao limpar tarefas');
+    }
+  };
 
-const handleExport = async () => {
-  try {
-    const message = await exportTasks();
-    setSuccessMessage(message);
-    setTimeout(() => setSuccessMessage(''), 2000);
-  } catch (err) {
-    setSuccessMessage('');
-    alert(err.message);
-  }
-};
+  const handleExport = async () => {
+    try {
+      const message = await exportTasks();
+      setSuccessMessage(message);
+      setTimeout(() => setSuccessMessage(''), 2000);
+    } catch (err) {
+      setSuccessMessage('');
+      alert(err.message);
+    }
+  };
 
-const handleRestore = async () => {
-  try {
-    const message = await restoreTasks();
-    setSuccessMessage(message);
-    setTimeout(() => setSuccessMessage(''), 2000);
-  } catch (err) {
-    setSuccessMessage('');
-    alert(err.message);
-  }
-};
+  const handleRestore = async () => {
+    try {
+      const message = await restoreTasks();
+      setSuccessMessage(message);
+      setTimeout(() => setSuccessMessage(''), 2000);
+    } catch (err) {
+      setSuccessMessage('');
+      alert(err.message);
+    }
+  };
 
-
-return (
-  <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
-    <Text style={[styles.title, theme === 'dark' && styles.darkText]}>Configurações</Text>
-    {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
-    <CustomButton
-      title={`Mudar para Tema ${theme === 'light' ? 'Escuro' : 'Claro'}`}
-      onPress={toggleTheme}
-      color="#007bff"
-    />
-    <CustomButton
-      title="Limpar Todas as Tarefas"
-      onPress={() => setModalVisible(true)}
-      color="#dc3545"
-    />
-    <CustomButton
-      title="Exportar Tarefas"
-      onPress={handleExport}
-      color="#17a2b8"
-    />
-    <CustomButton
-      title="Restaurar Backup"
-      onPress={handleRestore}
-      color="#17a2b8"
-    />
-    <CustomModal
-      visible={modalVisible}
-      onClose={() => setModalVisible(false)}
-      title="Limpar Tarefas"
-      message="Deseja excluir todas as tarefas locais?"
-      onConfirm={handleClearTasks}
-    />
-  </View>
-);
-};
+  return (
+    <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
+      <Text style={[styles.title, theme === 'dark' && styles.darkText]}>Configurações</Text>
+      {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
+      <CustomButton
+        title={`Mudar para Tema ${theme === 'light' ? 'Escuro' : 'Claro'}`}
+        onPress={toggleTheme}
+        color="#007bff"
+      />
+      <CustomButton
+        title="Limpar Todas as Tarefas"
+        onPress={() => setModalVisible(true)}
+        color="#dc3545"
+      />
+      <CustomButton
+        title="Exportar Tarefas"
+        onPress={handleExport}
+        color="#17a2b8"
+      />
+      <CustomButton
+        title="Restaurar Backup"
+        onPress={handleRestore}
+        color="#17a2b8"
+      />
+      <CustomButton
+        title="Abrir Menu Lateral"
+        onPress={() => navigate.toggleDrawer()}
+        color="#007bff"
+      />
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Limpar Tarefas"
+        message="Deseja excluir todas as tarefas locais?"
+        onConfirm={handleClearTasks}
+      />
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
     padding: 20,
   },
   darkContainer: {
@@ -97,13 +103,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#333',
   },
-  darkText: {
-    color: '#fff',
-  },
   successText: {
     fontSize: 16,
-    color : '#28a745',
+    color: '#28a745',
     textAlign: 'center',
-    marginBottom: 10, 
+    marginBottom: 10,
+  },
+  darkText: {
+    color: '#fff',
   },
 });
