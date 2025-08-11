@@ -10,23 +10,25 @@ export function TaskProvider({ children }) {
   // Carregar tarefas do AsyncStorage ao iniciar
   useEffect(() => {
     const loadTasks = async () => {
-      try {
-        const savedTasks = await AsyncStorage.getItem('@TaskApp:tasks');
-        if (savedTasks) {
-          const parsedTasks = JSON.parse(savedTasks);
-          if (Array.isArray(parsedTasks) && parsedTasks.every(task => task.id && task.title)) {
-            setLocalTasks(parsedTasks);
-          } else {
-            console.warn('Dados inválidos, inicializando com array vazio');
-            setLocalTasks([]);
-          }
+        try {
+            const savedTasks = await AsyncStorage.getItem('@TaskApp:tasks');
+            if (savedTasks) {
+                const parsedTasks = JSON.parse(savedTasks);
+                if (Array.isArray(parsedTasks) && parsedTasks.every(task => task.id && task.title)) {
+                    setLocalTasks(parsedTasks);
+                } else {
+                    console.warn('Dados inválidos, inicializando com array vazio');
+                    setLocalTasks([]);
+                    await AsyncStorage.setItem('@TaskApp:tasks', JSON.stringify([]));
+                }
+            }
+        } catch (err) {
+            console.error('Erro ao carregar tarefas:', err);
         }
-      } catch (err) {
-        console.error('Erro ao carregar tarefas:', err);
-      }
     };
     loadTasks();
-  }, []);
+}, []);
+
 
   // Salvar tarefas no AsyncStorage quando localTasks mudar
   useEffect(() => {
@@ -40,12 +42,19 @@ export function TaskProvider({ children }) {
     saveTasks();
   }, [localTasks]);
 
-  const addTask = ({ title, description, id }) => {
+ const addTask = ({ title, description, priority, id }) => {
     setLocalTasks((prev) => [
-      ...prev,
-      { id: id || `local-${Date.now()}`, title, description: description || '', completed: false },
+        ...prev,
+        {
+            id: id || `local-${Date.now()}`,
+            title,
+            description: description || '',
+            priority: priority || 'baixa',
+            completed: false,
+        },
     ]);
-  };
+};
+
 
   const toggleTaskCompletion = (id) => {
     setLocalTasks((prev) =>

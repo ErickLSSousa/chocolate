@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useTasks } from '../contexts/TaskContext';
 
-export default function TaskCard({ title, completed, onPress, onToggle, isLocal, onDelete }) {
+export default function TaskCard({ title, completed, priority, onPress, onToggle, isLocal, onDelete }) {
   const { theme } = useTasks();
 
   return (
@@ -15,7 +15,14 @@ export default function TaskCard({ title, completed, onPress, onToggle, isLocal,
             {completed ? '✓' : '⬜'}
           </Text>
         </TouchableOpacity>
-        <Text style={[styles.title, theme === 'dark' && styles.darkText]}>{title}</Text>
+
+        <View style={styles.textContainer}>
+          <Text style={[styles.title, theme === 'dark' && styles.darkText]}>{title}</Text>
+          <Text style={[styles.priority, theme === 'dark' && styles.darkText]}>
+            Prioridade: {priority || 'Não definida'}
+          </Text>
+        </View>
+
         {isLocal && (
           <TouchableOpacity onPress={onDelete}>
             <Text style={styles.deleteButton}>🗑️</Text>
@@ -55,10 +62,17 @@ const styles = StyleSheet.create({
   checkedCheckbox: {
     color: '#28a745',
   },
+  textContainer: {
+    flex: 1,
+    flexDirection: 'column',
+  },
   title: {
     fontSize: 16,
     color: '#333',
-    flex: 1,
+  },
+  priority: {
+    fontSize: 12,
+    color: '#666',
   },
   darkText: {
     color: '#fff',
@@ -66,5 +80,6 @@ const styles = StyleSheet.create({
   deleteButton: {
     fontSize: 20,
     color: '#dc3545',
+    marginLeft: 10,
   },
 });

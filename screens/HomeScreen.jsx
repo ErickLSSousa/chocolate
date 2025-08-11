@@ -37,20 +37,23 @@ export default function HomeScreen({ navigation }) {
   });
 
   const renderItem = ({ item }) => {
-    const isLocal = typeof item.id === 'string'
-    return(
-      <TaskCard
+  const isLocal = typeof item.id === 'string';
+  return (
+    <TaskCard
       title={item.title}
       completed={item.completed}
+      priority={item.priority}
       onPress={isLocal ? () => navigation.navigate('Details', { task: item }) : null}
       onToggle={isLocal ? () => toggleTaskCompletion(item.id) : null}
-      isLocal={isLocal}
       onDelete={isLocal ? () => {
         setTaskToDelete(item.id);
         setModalVisible(true);
       } : null}
+      isLocal={isLocal}
     />
-  )};
+  );
+};
+
 
   return (
     <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
