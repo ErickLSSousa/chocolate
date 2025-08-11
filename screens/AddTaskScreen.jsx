@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import { StyleSheet, View, Text, Alert, Switch } from 'react-native';
 import { useState } from 'react';
 import axios from 'axios';
 import { Formik } from 'formik';
@@ -17,35 +17,39 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function AddTaskScreen({ navigation, route }) {
-  const { addTask } = useTasks();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const { addTask, theme } = useTasks();
+  const [acceptTerms, setAcceptTerms] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleSubmit = async () => {
-    if (title.trim()) {
-      try {
-        const response = await axios.post('https://jsonplaceholder.typicode.com/todos', {
-          title: values.title,
-          completed: false,
-        });
-        addTask({
-          title: values.title,
-          description: values.description,
-          priority: values.priority,
-        });
-        setSuccessMessage('Tarefa adicionada com sucesso!');
-        setTimeout(() => {
-          setSuccessMessage('');
-          resetForm();
-          setAcceptTerms(false);
-          navigation.goBack();
-        }, 1000);
-      } catch (err) {
-        Alert.alert('Erro', 'Falha ao salvar na API');
-      }
+  const handleSubmit = async (values, { resetForm }) => {
+    if (!acceptTerms) {
+      Alert.alert(
+        'Erro', 'Voce precisa aceitar os termos de uso para adicionar uma tarefa'
+      );
+      return;
     }
-  };
-
+    try {
+      const response = await axios.post('https://jsonplaceholder.typicode.com/todos', {
+        title: values.title,
+        completed: false,
+      });
+      addTask({
+        title: values.title,
+        description: values.description,
+        priority: values.priority,
+      });
+      setSuccessMessage('Tarefa adicionada com sucesso!');
+      setTimeout(() => {
+        setSuccessMessage('');
+        resetForm();
+        setAcceptTerms(false);
+        navigation.goBack();
+      }, 1000);
+    } catch (err) {
+      Alert.alert('Erro', 'Falha ao salvar na API');
+      console.error(err);
+    }
+  }
 
   return (
     <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
@@ -122,73 +126,75 @@ export default function AddTaskScreen({ navigation, route }) {
         )}
       </Formik>
     </View>
-     );
-    }
+  );
+};
 
-            const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
-        alignItems: 'center',
-        padding: 20,
-    },
-    darkContainer: {
-        backgroundColor: '#333',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        color: '#333',
-    },
-    darkText: {
-        color: '#fff',
-    },
-    form: {
-        width: '100%',
-        alignItems: 'center',
-    },
-    pickerContainer: {
-        width: '100%',
-        backgroundColor: '#fff',
-        borderRadius: 5,
-        marginBottom: 10,
-    },
-    darkPickerContainer: {
-        backgroundColor: '#444',
-    },
-    picker: {
-        width: '100%',
-        height: 50,
-        color: '#333',
-    },
-    darkPicker: {
-        color: '#fff',
-    },
-    label: {
-        fontSize: 16,
-        color: '#333',
-        marginBottom: 5,
-    },
-    switchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    switchLabel: {
-        fontSize: 16,
-        color: '#333',
-        marginLeft: 10,
-    },
-    errorText: {
-        fontSize: 14,
-        color: '#dc3545',
-        marginBottom: 10,
-    },
-    successText: {
-        fontSize: 16,
-        color: '#28a745',
-        textAlign: 'center',
-        marginBottom: 10,
-    },
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    padding: 20,
+  },
+  darkContainer: {
+    backgroundColor: '#333',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+  },
+  darkText: {
+    color: '#fff',
+  },
+  form: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  pickerContainer: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  darkPickerContainer: {
+    backgroundColor: '#444',
+  },
+  picker: {
+    width: '100%',
+    height: 50,
+    color: '#333',
+  },
+  darkPicker: {
+    color: '#fff',
+  },
+  label: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 5,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  switchLabel: {
+    fontSize: 16,
+    color: '#333',
+    marginLeft: 10,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#dc3545',
+    marginBottom: 10,
+  },
+  successText: {
+    fontSize: 16,
+    color: '#28a745',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
 });
