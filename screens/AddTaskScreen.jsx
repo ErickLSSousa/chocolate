@@ -1,33 +1,34 @@
-import { StyleSheet, View, Text, Alert, Switch } from 'react-native';
+import { StyleSheet, View, Text, Switch, Alert } from 'react-native';
 import { useState } from 'react';
-import axios from 'axios';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Picker } from '@react-native-picker/picker';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import { useTasks } from '../contexts/TaskContext';
+import axios from 'axios';
 
+// Esquema de validação com Yup
 const validationSchema = Yup.object().shape({
   title: Yup.string()
+    .min(3, 'O título deve ter pelo menos 3 caracteres')
     .max(50, 'O título deve ter no máximo 50 caracteres')
-    .required('Por favor, insira o título da tarefa.'),
+    .required('O título é obrigatório'),
   description: Yup.string().max(200, 'A descrição deve ter no máximo 200 caracteres'),
-  priority: Yup.string().required('selecione uma prioridade'),
+  priority: Yup.string().required('Selecione uma prioridade'),
 });
 
-export default function AddTaskScreen({ navigation, route }) {
+export default function AddTaskScreen({ navigation }) {
   const { addTask, theme } = useTasks();
-  const [acceptTerms, setAcceptTerms] = useState('');
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = async (values, { resetForm }) => {
     if (!acceptTerms) {
-      Alert.alert(
-        'Erro', 'Voce precisa aceitar os termos de uso para adicionar uma tarefa'
-      );
+      Alert.alert('Erro', 'Você deve aceitar os termos para adicionar uma tarefa.');
       return;
     }
+
     try {
       const response = await axios.post('https://jsonplaceholder.typicode.com/todos', {
         title: values.title,
@@ -47,9 +48,9 @@ export default function AddTaskScreen({ navigation, route }) {
       }, 1000);
     } catch (err) {
       Alert.alert('Erro', 'Falha ao salvar na API');
-      console.error(err);
     }
-  }
+  };
+
 
   return (
     <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
@@ -60,7 +61,7 @@ export default function AddTaskScreen({ navigation, route }) {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleSubmit, values, errors, touched }) => (
+        {({ handleChange, handleSubmit, values, errors, touched, resetForm }) => (
           <View style={styles.form}>
             <CustomInput
               value={values.title}
@@ -76,12 +77,12 @@ export default function AddTaskScreen({ navigation, route }) {
               onChangeText={handleChange('description')}
               placeholder="Digite a descrição (opcional)"
               multiline
-            />{touched.description && errors.description && (
+            />
+            {touched.description && errors.description && (
               <Text style={styles.errorText}>{errors.description}</Text>
             )}
-
             <View style={[styles.pickerContainer, theme === 'dark' && styles.darkPickerContainer]}>
-              <Text style={[styles.label, theme === 'dark' && styles.darkText]}>Prioridade</Text>
+              <Text style={[styles.label, theme === 'dark' && styles.darkText]}>Prioridade:</Text>
               <Picker
                 selectedValue={values.priority}
                 onValueChange={handleChange('priority')}
@@ -92,11 +93,9 @@ export default function AddTaskScreen({ navigation, route }) {
                 <Picker.Item label="Alta" value="alta" />
               </Picker>
             </View>
-
             {touched.priority && errors.priority && (
               <Text style={styles.errorText}>{errors.priority}</Text>
             )}
-
             <View style={styles.switchContainer}>
               <Switch
                 value={acceptTerms}
@@ -108,18 +107,25 @@ export default function AddTaskScreen({ navigation, route }) {
                 Aceitar termos de uso
               </Text>
             </View>
-
             <CustomButton
               title="Salvar Tarefa"
               onPress={handleSubmit}
               color="#007bff"
               size="large"
             />
-
             <CustomButton
               title="Cancelar"
               onPress={() => navigation.goBack()}
               color="#dc3545"
+              size="large"
+            />
+            <CustomButton
+              title="Limpar Formulário"
+              onPress={() => {
+                resetForm();
+                setAcceptTerms(false);
+              }}
+              color="#6c757d"
               size="large"
             />
           </View>
@@ -127,9 +133,7 @@ export default function AddTaskScreen({ navigation, route }) {
       </Formik>
     </View>
   );
-};
-
-
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -179,7 +183,6 @@ const styles = StyleSheet.create({
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
   },
   switchLabel: {
     fontSize: 16,

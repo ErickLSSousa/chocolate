@@ -3,6 +3,11 @@ import { useTasks } from '../contexts/TaskContext';
 
 export default function TaskCard({ title, completed, priority, onPress, onToggle, isLocal, onDelete }) {
   const { theme } = useTasks();
+  const priorityColors = {
+    alta: '#dc3545',
+    media: '#ffc107',
+    baixa: '#28a745',
+  };
 
   return (
     <TouchableOpacity
@@ -15,14 +20,12 @@ export default function TaskCard({ title, completed, priority, onPress, onToggle
             {completed ? '✓' : '⬜'}
           </Text>
         </TouchableOpacity>
-
         <View style={styles.textContainer}>
           <Text style={[styles.title, theme === 'dark' && styles.darkText]}>{title}</Text>
-          <Text style={[styles.priority, theme === 'dark' && styles.darkText]}>
+          <Text style={[styles.priority, theme === 'dark' && styles.darkText,{ color: priorityColors[priority] || '#666' }]}>
             Prioridade: {priority || 'Não definida'}
           </Text>
         </View>
-
         {isLocal && (
           <TouchableOpacity onPress={onDelete}>
             <Text style={styles.deleteButton}>🗑️</Text>
@@ -64,14 +67,13 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    flexDirection: 'column',
   },
   title: {
     fontSize: 16,
     color: '#333',
   },
   priority: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#666',
   },
   darkText: {
@@ -80,6 +82,5 @@ const styles = StyleSheet.create({
   deleteButton: {
     fontSize: 20,
     color: '#dc3545',
-    marginLeft: 10,
   },
 });
