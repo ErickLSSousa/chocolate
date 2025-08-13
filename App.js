@@ -9,6 +9,8 @@ import ProfileScreen from './screens/ProfileScreen';
 import SettingsScreen from './screens/SettingScreen';
 import { TaskProvider } from './contexts/TaskContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Provider } from 'react-redux';
+import { store } from './store';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -113,10 +115,10 @@ function DrawerNavigator() {
 }
 export default function App() {
   return (
-    <TaskProvider>
+    <Provider store={store}>
       <NavigationContainer>
         <DrawerNavigator />
       </NavigationContainer>
-    </TaskProvider>
+    </Provider>
   );
 }

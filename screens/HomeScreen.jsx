@@ -4,10 +4,12 @@ import axios from 'axios';
 import TaskCard from '../components/TaskCard';
 import CustomButton from '../components/CustomButton';
 import CustomModal from '../components/CustomModal';
-import { useTasks } from '../contexts/TaskContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleTaskCompletion, deleteTask, loadTasks } from '../features/tasksSlice';
 
 export default function HomeScreen({ navigation }) {
-  const { localTasks, toggleTaskCompletion, deleteTask, getCompletedCount, theme } = useTasks();
+  const { localTasks, theme } = useSelector((state) => state.tasks);
+  const dispatch = useDispatch();
   const [apiTasks, setApiTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -17,6 +19,7 @@ export default function HomeScreen({ navigation }) {
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
+    dispatch(loadTasks());
     setIsLoading(true);
     axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5')
       .then(response => {
@@ -27,7 +30,7 @@ export default function HomeScreen({ navigation }) {
         setError('Erro ao carregar tarefas da API');
         setIsLoading(false);
       });
-  }, []);
+  }, [dispatch]);
 
   const allTasks = [...apiTasks, ...localTasks];
   const filteredTasks = allTasks.filter((task) => {
@@ -37,23 +40,21 @@ export default function HomeScreen({ navigation }) {
   });
 
   const renderItem = ({ item }) => {
-  const isLocal = typeof item.id === 'string';
-  return (
-    <TaskCard
+    const isLocal = typeof item.id === 'string'
+    return(
+      <TaskCard
       title={item.title}
       completed={item.completed}
       priority={item.priority}
       onPress={isLocal ? () => navigation.navigate('Details', { task: item }) : null}
       onToggle={isLocal ? () => toggleTaskCompletion(item.id) : null}
+      isLocal={isLocal}
       onDelete={isLocal ? () => {
         setTaskToDelete(item.id);
         setModalVisible(true);
       } : null}
-      isLocal={isLocal}
     />
-  );
-};
-
+  )};
 
   return (
     <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
@@ -130,7 +131,7 @@ export default function HomeScreen({ navigation }) {
         title="Confirmar Exclusão"
         message="Deseja realmente excluir esta tarefa?"
         onConfirm={() => {
-          deleteTask(taskToDelete);
+          dispatch(deleteTask(taskToDelete));
           setModalVisible(false);
           setTaskToDelete(null);
           setSuccessMessage('Tarefa excluída com sucesso!');

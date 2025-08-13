@@ -1,19 +1,27 @@
 import { StyleSheet, View, Text } from 'react-native';
-import { useState } from 'react';
+import { use, useState } from 'react';
 import CustomButton from '../components/CustomButton';
 import CustomModal from '../components/CustomModal';
 import { useTasks } from '../contexts/TaskContext';
 import { useNavigation } from '@react-navigation/native';
+import { createSlice } from '@reduxjs/toolkit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { toggleTheme,clearTasks, exportTasks, restoreTasks }  from '../contexts/taskslice';
+import { useSelector } from 'react-redux';
+
 
 export default function SettingsScreen() {
-  const { toggleTheme, theme, clearTasks, exportTasks, restoreTasks } = useTasks();
+  const {theme } = useSelector((state) => state.tasks);
   const [modalVisible, setModalVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigation();
+  const counter = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
 
   const handleClearTasks = async () => {
     try {
-      await clearTasks();
+      await dispatch(clearTasks());
+      await dispatch(saveTasks([]));
       setModalVisible(false);
       setSuccessMessage('Tarefas limpas com sucesso!');
       setTimeout(() => setSuccessMessage(''), 2000);
@@ -26,8 +34,8 @@ export default function SettingsScreen() {
 
   const handleExport = async () => {
     try {
-      const message = await exportTasks();
-      setSuccessMessage(message);
+      const result = await dispatch(exportTasks()).unwrap();
+      setSuccessMessage(result);
       setTimeout(() => setSuccessMessage(''), 2000);
     } catch (err) {
       setSuccessMessage('');
@@ -37,8 +45,8 @@ export default function SettingsScreen() {
 
   const handleRestore = async () => {
     try {
-      const message = await restoreTasks();
-      setSuccessMessage(message);
+      const result= await dispatch(restoreTasks()).unwrap(); 
+      setSuccessMessage('backup restaurado com sucesso!');
       setTimeout(() => setSuccessMessage(''), 2000);
     } catch (err) {
       setSuccessMessage('');
@@ -50,66 +58,62 @@ export default function SettingsScreen() {
     <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
       <Text style={[styles.title, theme === 'dark' && styles.darkText]}>Configurações</Text>
       {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
+      <Text style={[styles.text, theme === 'dark' && styles.darkText]}>
+        Contador: {counter}
+      </Text>
+
       <CustomButton
-        title={`Mudar para Tema ${theme === 'light' ? 'Escuro' : 'Claro'}`}
-        onPress={toggleTheme}
+        title="Incrementar"
+        onPress={() => dispatch(increment())}
         color="#007bff"
       />
+
       <CustomButton
-        title="Limpar Todas as Tarefas"
-        onPress={() => setModalVisible(true)}
-        color="#dc3545"
-      />
-      <CustomButton
-        title="Exportar Tarefas"
-        onPress={handleExport}
-        color="#17a2b8"
-      />
-      <CustomButton
-        title="Restaurar Backup"
-        onPress={handleRestore}
-        color="#17a2b8"
-      />
-      <CustomButton
-        title="Abrir Menu Lateral"
-        onPress={() => navigate.toggleDrawer()}
+        title="Decrementar"
+        onPress={() => dispatch(decrement())}
         color="#007bff"
       />
-      <CustomModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        title="Limpar Tarefas"
-        message="Deseja excluir todas as tarefas locais?"
-        onConfirm={handleClearTasks}
+
+      <CustomButton
+        title="Resetar Contador"
+        onPress={() => dispatch(reset())}
+        color="#007bff"
+      />  
+
+      
+      <CustomButton
+        title={`Mudar para tema ${theme === 'light' ? 'dark' : 'light'}`}
+        onPress={() => dispatch(toggleTheme())}
+        color="#007bff"
       />
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+} 
+   const styles = StyleSheet.create({
+        container: {
+        flex: 1,
+      backgroundColor: '#f5f5f5',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 20,
   },
-  darkContainer: {
-    backgroundColor: '#333',
+      darkContainer: {
+        backgroundColor: '#333',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
+      title: {
+        fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      color: '#333',
   },
-  successText: {
-    fontSize: 16,
-    color: '#28a745',
-    textAlign: 'center',
-    marginBottom: 10,
+      successText: {
+        fontSize: 16,
+      color: '#28a745',
+      textAlign: 'center',
+      marginBottom: 10,
   },
-  darkText: {
-    color: '#fff',
+      darkText: {
+        color: '#fff',
   },
 });
+   
