@@ -1,5 +1,4 @@
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { useTasks } from '../contexts/TaskContext';
 import { useSelector } from 'react-redux';
 
 export default function TaskCard({ title, completed, priority, onPress, onToggle, isLocal, onDelete }) {

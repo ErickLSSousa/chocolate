@@ -1,5 +1,4 @@
 import { StyleSheet, View, Text } from 'react-native';
-import { useTasks } from '../contexts/TaskContext';
 import { useSelector } from 'react-redux';
 
 export default function DetailsScreen({ route }) {

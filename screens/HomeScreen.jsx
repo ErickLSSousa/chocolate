@@ -5,7 +5,7 @@ import TaskCard from '../components/TaskCard';
 import CustomButton from '../components/CustomButton';
 import CustomModal from '../components/CustomModal';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleTaskCompletion, deleteTask, loadTasks } from '../features/tasksSlice';
+import { toggleTaskCompletion, deleteTask, loadTasks, getCompletedCount } from '../contexts/taskslice';
 
 export default function HomeScreen({ navigation }) {
   const { localTasks, theme } = useSelector((state) => state.tasks);
@@ -60,7 +60,7 @@ export default function HomeScreen({ navigation }) {
     <View style={[styles.container, theme === 'dark' && styles.darkContainer]}>
       <Text style={[styles.title, theme === 'dark' && styles.darkText]}>Minhas Tarefas</Text>
       <Text style={[styles.counterText, theme === 'dark' && styles.darkText]}>
-        Tarefas: {filteredTasks.length} | Concluídas: {getCompletedCount()}
+        Tarefas: {filteredTasks.length} | Concluídas: {getCompletedCount}
       </Text>
       {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
       <View style={styles.filterContainer}>

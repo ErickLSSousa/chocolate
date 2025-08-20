@@ -1,11 +1,9 @@
 import { StyleSheet, View, Text, Switch, Alert } from 'react-native';
-import { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Picker } from '@react-native-picker/picker';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-import { useTasks } from '../contexts/TaskContext';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask } from '../contexts/taskslice';

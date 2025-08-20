@@ -1,11 +1,7 @@
 import { StyleSheet, View, Text } from 'react-native';
 import { use, useState } from 'react';
 import CustomButton from '../components/CustomButton';
-import CustomModal from '../components/CustomModal';
-import { useTasks } from '../contexts/TaskContext';
 import { useNavigation } from '@react-navigation/native';
-import { createSlice } from '@reduxjs/toolkit';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { toggleTheme,clearTasks, exportTasks, restoreTasks }  from '../contexts/taskslice';
 import { useSelector } from 'react-redux';
 

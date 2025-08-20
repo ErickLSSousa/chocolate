@@ -8,7 +8,7 @@ import HomeScreen from './screens/HomeScreen';
 import AddTaskScreen from './screens/AddTaskScreen';
 import DetailsScreen from './screens/DetailsScreen';
 import ProfileScreen from './screens/ProfileScreen';
-import SettingsScreen from './screens/SettingsScreen';
+import SettingsScreen from './screens/SettingScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LocationScreen from './screens/LocationScreen';
 
