@@ -2,22 +2,21 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import HomeScreen from './screens/HomeScreen';
 import AddTaskScreen from './screens/AddTaskScreen';
 import DetailsScreen from './screens/DetailsScreen';
 import ProfileScreen from './screens/ProfileScreen';
-import SettingsScreen from './screens/SettingScreen';
-import { TaskProvider } from './contexts/TaskContext';
+import SettingsScreen from './screens/SettingsScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Provider } from 'react-redux';
-import { store } from './store';
+import LocationScreen from './screens/LocationScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
-// Stack para a aba Home, incluindo AddTask e Details
-function HomeStack(){
+function HomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -47,8 +46,6 @@ function HomeStack(){
   );
 }
 
-
-// Configuração do TabNavigator
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -58,6 +55,7 @@ function TabNavigator() {
           if (route.name === 'Tarefas') iconName = 'home';
           else if (route.name === 'Perfil') iconName = 'person';
           else if (route.name === 'Configurações') iconName = 'settings';
+          else if (route.name === 'Localização') iconName = 'location-on';
           return <Icon name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#007bff',
@@ -68,12 +66,11 @@ function TabNavigator() {
       <Tab.Screen name="Tarefas" component={HomeStack} options={{ headerShown: false }} />
       <Tab.Screen name="Perfil" component={ProfileScreen} />
       <Tab.Screen name="Configurações" component={SettingsScreen} />
+      <Tab.Screen name="Localização" component={LocationScreen} />
     </Tab.Navigator>
   );
 }
 
-
-// Configuração do DrawerNavigator
 function DrawerNavigator() {
   return (
     <Drawer.Navigator
@@ -110,9 +107,19 @@ function DrawerNavigator() {
           ),
         }}
       />
+      <Drawer.Screen
+        name="Localização"
+        component={LocationScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <Icon name="location-on" size={size} color={color} />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
+
 export default function App() {
   return (
     <Provider store={store}>
